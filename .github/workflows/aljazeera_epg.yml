@@ -1,18 +1,22 @@
 name: AlJazeera EPG Update
+
 on:
   schedule:
-    - cron: '0 */12 * * *' # يعمل كل 12 ساعة
-  workflow_dispatch: # يسمح لك بتشغيله يدوياً لتجربته
+    - cron: '0 */12 * * *' # تحديث كل 12 ساعة
+  workflow_dispatch: # زر للتشغيل اليدوي
+
+permissions:
+  contents: write # ضروري جداً للسماح للأكشن برفع الملفات
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
@@ -27,5 +31,6 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git add aljazeera_epg.xml
-          git commit -m "Update EPG Data" || exit 0
+          # المحاولة فقط إذا كان هناك تغيير لعدم إيقاف الأكشن بخطأ
+          git commit -m "Update AlJazeera EPG Data" || echo "No changes to commit"
           git push
