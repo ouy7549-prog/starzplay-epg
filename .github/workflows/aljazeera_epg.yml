@@ -2,11 +2,11 @@ name: AlJazeera EPG Update
 
 on:
   schedule:
-    - cron: '0 */12 * * *' # تحديث كل 12 ساعة
-  workflow_dispatch: # زر للتشغيل اليدوي
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
 
 permissions:
-  contents: write # ضروري جداً للسماح للأكشن برفع الملفات
+  contents: write
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add aljazeera_epg.xml
-          # المحاولة فقط إذا كان هناك تغيير لعدم إيقاف الأكشن بخطأ
-          git commit -m "Update AlJazeera EPG Data" || echo "No changes to commit"
-          git push
+          # استخدام git add . بدلاً من اسم الملف لتجنب خطأ pathspec
+          git add . 
+          # عمل commit فقط إذا كان هناك تغييرات فعلية
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update EPG Data" && git push)
